@@ -1918,10 +1918,18 @@ void changeGmail(const char* Username) {
 	while (!gmailChanged) {
 		printf("New Gmail: ");
 		getUsername(newGmail);
+		if (!isValidSiUp(newGmail, gmail)) {
+			printf("Invalid Gmail address. Please enter a valid Gmail address.\r");
+			moveCursorAbove(); // Move the cursor in the right place for entering the gmail
+			printf(MARIO_SKY "                                              \r" RESET); // Clear the line for a new prompt
+			continue;
+		}
+		printf(MARIO_SKY "                                                                \r" RESET); // Clear the line for a new prompt
 		printf("Confirm Gmail: ");
 		getUsername(confirmGmail);
 
 		if (strcmp(newGmail, confirmGmail) != 0) {
+			moveCursorAbove();
 			printf("Gmails do not match.\r");
 			// Clear input lines
 			for (int i = 0; i < 2; i++) {
@@ -1930,7 +1938,7 @@ void changeGmail(const char* Username) {
 			}
 			continue;
 		}
-
+		
 		// gmail validation passed
 		FILE* file = fopen("UsersInformation.txt", "r");
 		if (file == NULL) {
@@ -1976,7 +1984,7 @@ void changeGmail(const char* Username) {
 				remove("TempUsersInformation.txt");
 				return;
 			}
-			printf("Username successfully changed.\n");
+			printf("Gmail successfully changed.\n");
 			printf("Going back to menu ...");
 			gmailChanged = true;
 		}
