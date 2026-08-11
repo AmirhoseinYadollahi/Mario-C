@@ -542,8 +542,44 @@ int main() {
 			}
 		}
 		else {
+			system("cls");
+			printBackground();
+			printf(RESET);
+
+			int SelectedOption = 0;
+
+			// Set cursor in the beginning of the place we wanted to put the menu which is (1, 15)
+			set_cursor_position(1, 11);
+			printf(GREEN_MENU BACKGROUND "Level Completed!\n" RESET);
+
+			int minutes = time / 60;
+			int seconds = time % 60;
+			printf("Time: ");
+			Sleep(800);
+			printf("%d:%02d\n", minutes, seconds);
+			sleepFor(2);
+			printf("Score: ");
+			Sleep(800);
+			printf("%d\n", score);
+			sleepFor(2);
+			printf("Coins: ");
+			for (int i = 0; i < coins; i++) {
+				Sleep(700);
+				printf(COIN);
+			}
+			printf("\n");
+			int request = choose_options(completedLevelMenu, SelectedOption, 2);
 			save_game_history(usersInformation.userName, _map, time, score, coins, false);
-			break; // Exit the loop if the player wins
+
+			switch (request) {
+			case nextLevel:
+				break;
+			case Exit4:
+				return 0;
+			default:
+				break;
+			}
+			break;
 		}
 	}
 }
