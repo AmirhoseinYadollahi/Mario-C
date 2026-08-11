@@ -86,7 +86,7 @@ enum checkingInformation {
 #pragma region enumerations of the game
 enum mapItems {
 	nothing,      // 0
-	stone,        // 1
+	brick,        // 1
 	TPtube,       // 2
 	wood,         // 3
 	coinBlock,    // 4
@@ -190,14 +190,16 @@ enum types {
 #define BACKGROUND RGB_BG(52, 168, 255)
 #pragma endregion
 #pragma region game characters
+#define BRICK "\xF0\x9F\xA7\xB1"
 #define STONE "\xF0\x9F\xAA\xA8" 
 #define MAGE "\xF0\x9F\xA7\x99"
 #define GHOST "\xF0\x9F\x91\xBB"
 #define COIN "\xF0\x9F\xAA\x99"
-#define SHIELD "\xF0\x9F\x9B\xA1"
+#define SHIELD "\xF0\x9F\x9B\xA1\xEF\xB8\x8F"
 #define VOID "\xF0\x9F\x8C\x80"
 #define WOOD "\xF0\x9F\xAA\xB5"
 #define ICE "\xF0\x9F\xA7\x8A"
+#define SWORD "\xE2\x9A\x94\xEF\xB8\x8F"
 #pragma endregion
 
 // RGB Text (Foreground) and screen (Background) color codes
@@ -222,6 +224,7 @@ enum types {
 #define YELLOW RGB_BG(235, 185, 0)
 #define RED RGB_BG(255, 120, 120)
 #define BROWN RGB_BG(160, 82, 45)
+#define GAME_BLUE RGB_BG(79, 180, 208)
 #pragma endregion
 
 
@@ -2330,14 +2333,14 @@ void shiftArrayFrom(void* array, int type, int index, int array_size) {
 
 void printMap(int map[][72], int width, int length) {
 	set_cursor_position(1, 2);
-
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < length; j++) {
+			printf(GAME_BLUE);
 			if (map[i][j] == nothing) {
 				printf("  "); // Prints 2 spaces
 			}
-			else if (map[i][j] == stone) {
-				printf(STONE); // stone
+			else if (map[i][j] == brick) {
+				printf(BRICK); // brick
 			}
 			else if (map[i][j] == TPtube) {
 				printf(GRAY "  " RESET);
@@ -2352,7 +2355,7 @@ void printMap(int map[][72], int width, int length) {
 				printf("\xF0\x9F\x8F\xB0"); // Print the flag
 			}
 			else if (map[i][j] == coin) {
-				printf("\xF0\x9F\xAA\x99"); // Print the coin
+				printf(COIN); // Print the coin
 			}
 			else if (map[i][j] == coinBlock) {
 				printf("\xF0\x9F\x92\xB0"); // Print the YELLOW blocks 
@@ -2367,10 +2370,10 @@ void printMap(int map[][72], int width, int length) {
 				printf(VOID); // Print a _void
 			}
 			else if (map[i][j] == shield) {
-				printf(SHIELD);
+				printf(SHIELD "\b");
 			}
 			else if (map[i][j] == sword) {
-				printf("\xF0\x9F\x97\xA1"); // print a sword
+				printf(SWORD); // print a sword
 			}
 			else if (map[i][j] == TPtube2) {
 				printf(ICE_BLUE "  " RESET);
@@ -2389,13 +2392,13 @@ void printMap(int map[][72], int width, int length) {
 void printScore(int currentScore) {
 	int pos = 22;
 	set_cursor_position(pos, 1);
-	printf("%d", currentScore);
+	printf(RESET "%d" GAME_BLUE, currentScore);
 }
 
 void printCoins(int currentCoins) {
 	int pos = 34 + 2 * (currentCoins - 1);
 	set_cursor_position(pos, 1);
-	printf(COIN);
+	printf(RESET COIN GAME_BLUE);
 }
 
 void deletingmage(int mariosX, int magesCount, int magesXPosition[], int magesYPosition[], bool mageStandsOnCoin[], int magesDirection[]) {
@@ -2425,7 +2428,7 @@ void magesMovement(int map[][72], int magesXPosition[], int magesYPosition[], in
 
 				switch (direction[i]) {
 				case right:
-					if (map[y - 2][x / 2 + 1] == stone || map[y - 2][x / 2 + 1] == 2 || map[y - 2][x / 2 + 1] == 3 || map[y - 2][x / 2 + 1] == mage || map[y - 2][x / 2 + 1] == invisibleBlock) {
+					if (map[y - 2][x / 2 + 1] == brick || map[y - 2][x / 2 + 1] == 2 || map[y - 2][x / 2 + 1] == 3 || map[y - 2][x / 2 + 1] == mage || map[y - 2][x / 2 + 1] == invisibleBlock) {
 						direction[i] = (direction[i] + 1) % 2; // Switching the direction
 						if (map[y - 2][x / 2 + 1] == mage) {
 							for (int k = 0; k < magesCount; k++) {
@@ -2481,7 +2484,7 @@ void magesMovement(int map[][72], int magesXPosition[], int magesYPosition[], in
 					break;
 
 				case left:
-					if (map[y - 2][(x / 2) - 1] == stone || map[y - 2][(x / 2) - 1] == 2 || map[y - 2][(x / 2) - 1] == 3 || map[y - 2][x / 2 - 1] == mage) {
+					if (map[y - 2][(x / 2) - 1] == brick || map[y - 2][(x / 2) - 1] == 2 || map[y - 2][(x / 2) - 1] == 3 || map[y - 2][x / 2 - 1] == mage) {
 						direction[i] = (direction[i] + 1) % 2; // Switching directions
 						if (map[y - 2][x / 2 + 1] == mage) {
 							for (int k = 0; k < magesCount; k++) {
@@ -2612,7 +2615,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 			int minutes = *_time / 60;
 			int seconds = *_time % 60;
 			set_cursor_position(1, 1);
-			printf("Time: %d:%02d", minutes, seconds);
+			printf(RESET "Time: %d:%02d" GAME_BLUE, minutes, seconds);
 			(*_time)++;
 			mageBonusTimer++;
 			// Zero the Iteration counter so that it won't exceed the limits
@@ -2662,7 +2665,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 			// Erase the current position by overwriting with spaces
 			WriteConsoleOutputCharacterW(hConsole, L"  ", 2, coord, &charsWritten);
 			if (y < 27) {
-				if (map[y][x / 2] != stone && map[y][x / 2] != TPtube && map[y][x / 2] != TPtube2 && map[y][x / 2] != TPtube3 &&
+				if (map[y][x / 2] != brick && map[y][x / 2] != TPtube && map[y][x / 2] != TPtube2 && map[y][x / 2] != TPtube3 &&
 					map[y][x / 2] != wood && map[y][x / 2] != coinBlock && map[y][x / 2] != coin && map[y][x / 2] != ghost &&
 					map[y][x / 2] != mage && map[y][x / 2] != ice && map[y][x / 2] != sword && map[y][x / 2] != shield) {
 					y++;
@@ -2757,7 +2760,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 			case 'W':
 			case ' ':
 				if (y > 2 && !isJumping && !isFalling) {
-					if (map[y - 2][x / 2] != stone && map[y - 2][x / 2] != TPtube && map[y - 2][x / 2] != TPtube2 && map[y - 2][x / 2] != TPtube3 && map[y - 2][x / 2] != shield &&
+					if (map[y - 2][x / 2] != brick && map[y - 2][x / 2] != TPtube && map[y - 2][x / 2] != TPtube2 && map[y - 2][x / 2] != TPtube3 && map[y - 2][x / 2] != shield &&
 						map[y - 2][x / 2] != wood && map[y - 2][x / 2] != coinBlock && map[y - 2][x / 2] != coin && map[y - 2][x / 2] != ice && map[y - 2][x / 2] != sword) {
 						isJumping = true;
 						isFalling = false;
@@ -2774,7 +2777,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 								CoinBlockHasCoins = false;
 								map[y - 2][x / 2] = 1;
 								set_cursor_position(19, 11);
-								printf(STONE);
+								printf(BRICK);
 								set_cursor_position(1, 16);
 							}
 						}
@@ -2805,9 +2808,9 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 								(*_coins)++;
 								printCoins(*_coins);
 							}
-							map[y - 2][x / 2] = stone;
+							map[y - 2][x / 2] = brick;
 							set_cursor_position(x + 1, y);
-							printf(STONE); // The ice block turns into stone once crushed
+							printf(BRICK); // The ice block turns into brick once crushed
 						}
 					}
 				}
@@ -2816,7 +2819,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 			case 'a': // Move left
 			case 'A':
 				if (x > 2) {
-					if (map[y - 1][(x / 2) - 1] != stone && map[y - 1][(x / 2) - 1] != 2 && map[y - 1][(x / 2) - 1] != 3 &&
+					if (map[y - 1][(x / 2) - 1] != brick && map[y - 1][(x / 2) - 1] != 2 && map[y - 1][(x / 2) - 1] != 3 &&
 						map[y - 1][(x / 2) - 1] != coinBlock && map[y - 1][(x / 2) - 1] != coin && map[y - 1][(x / 2) - 1] != ghost &&
 						map[y - 1][(x / 2) - 1] != ice && map[y - 1][(x / 2) - 1] != mage && map[y - 1][x / 2 - 1] != sword && map[y - 1][x / 2 - 1] != shield) {
 						x -= 2;
@@ -2875,7 +2878,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 			case 'd':  // Move right
 			case 'D':
 				if (x < 140) {
-					if (map[y - 1][x / 2 + 1] != stone && map[y - 1][x / 2 + 1] != TPtube && map[y - 1][x / 2 + 1] != TPtube2 && map[y - 1][x / 2 + 1] != TPtube3 &&
+					if (map[y - 1][x / 2 + 1] != brick && map[y - 1][x / 2 + 1] != TPtube && map[y - 1][x / 2 + 1] != TPtube2 && map[y - 1][x / 2 + 1] != TPtube3 &&
 						map[y - 1][x / 2 + 1] != wood && map[y - 1][x / 2 + 1] != coinBlock && map[y - 1][x / 2 + 1] != coin && map[y - 1][x / 2 + 1] != ghost &&
 						map[y - 1][x / 2 + 1] != ice && map[y - 1][x / 2 + 1] != mage && map[y - 1][x / 2 + 1] != sword && map[y - 1][x / 2 + 1] != shield) {
 
@@ -2970,7 +2973,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 		}
 
 		if (isJumping && heightJumped < maxJumpHeight) {
-			if (map[y - 2][x / 2] != stone && map[y - 2][x / 2] != TPtube && map[y - 2][x / 2] != TPtube2 && map[y - 2][x / 2] != TPtube3 &&
+			if (map[y - 2][x / 2] != brick && map[y - 2][x / 2] != TPtube && map[y - 2][x / 2] != TPtube2 && map[y - 2][x / 2] != TPtube3 &&
 				map[y - 2][x / 2] != wood && map[y - 2][x / 2] != coinBlock && map[y - 2][x / 2] != coin && map[y - 2][x / 2] != ice) {
 				isJumping = true;
 				heightJumped++;
@@ -2986,9 +2989,9 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 						printCoins(*_coins);
 						if (numberOfBlockCoins == maxBlockCoins) {
 							CoinBlockHasCoins = false;
-							map[y - 2][x / 2] = stone;
+							map[y - 2][x / 2] = brick;
 							set_cursor_position(x + 1, y);
-							printf(STONE); // The coin block turns into stone once the coin is collected
+							printf(BRICK); // The coin block turns into brick once the coin is collected
 						}
 					}
 				}
@@ -3006,9 +3009,9 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 						(*_coins)++;
 						printCoins(*_coins);
 					}
-					map[y - 2][x / 2] = stone;
+					map[y - 2][x / 2] = brick;
 					set_cursor_position(x + 1, y);
-					printf(STONE); // The ice block turns into stone once crushed
+					printf(BRICK); // The ice block turns into brick once crushed
 				}
 				isJumping = false;
 				heightJumped = 0;
