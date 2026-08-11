@@ -9,7 +9,7 @@
 #pragma warning (disable:4996)
 
 #define SIZE 30
-#define FILE_NAME "game_history.txt"
+#define HISTORY_FILE "game_history.txt"
 
 #pragma region enumerations of menus background
 enum cloudColors {
@@ -270,6 +270,8 @@ void printCoins(int currentCoins);
 void magesMovement(int map[][72], int magesPositions[], int magesYPosition[], int magesCount, int direction[], bool mageStandsOnCoin[]);
 void deletingmage(int mariosX, int magesCount, int magesXPosition[], int magesYPosition[], bool mageStandsOnCoin[], int magesDirection[]);
 void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _score, int* _coins);
+
+// History related functions
 void save_game_history(const char* username, int map, int time, int score, int coins, int lost);
 void read_game_history(const char* username);
 
@@ -3053,8 +3055,12 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 	}
 }
 
+#pragma endregion
+
+// History related functions 
+
 void save_game_history(const char* username, int map, int time, int score, int coins, int lost) {
-	FILE* file = fopen(FILE_NAME, "a"); // Open file in append mode
+	FILE* file = fopen(HISTORY_FILE, "a"); // Open file in append mode
 	if (!file) {
 		printf("Error opening file!\n");
 		return;
@@ -3071,7 +3077,7 @@ void save_game_history(const char* username, int map, int time, int score, int c
 		fprintf(file, "%s\n%d %d %d 0 0 0\n", username, time, score, coins);
 	}
 	else if (map == 2) {
-		FILE* read_file = fopen(FILE_NAME, "r");
+		FILE* read_file = fopen(HISTORY_FILE, "r");
 		if (!read_file) {
 			printf("Error opening file for reading!\n");
 			fclose(file);
@@ -3108,7 +3114,7 @@ void save_game_history(const char* username, int map, int time, int score, int c
 }
 
 void read_game_history(const char* username) {
-	FILE* file = fopen(FILE_NAME, "r");
+	FILE* file = fopen(HISTORY_FILE, "r");
 	if (!file) {
 		printf("Error opening file for reading!\n");
 		return;
@@ -3124,8 +3130,11 @@ void read_game_history(const char* username) {
 			fgets(line, sizeof(line), file);
 			sscanf(line, "%d %d %d %d %d %d", &time1, &score1, &coins1, &time2, &score2, &coins2);
 
-			printf("____ %d %d %d ____ %d %d %d\n", time1, score1, coins1, time2, score2, coins2);
-			printf("map1 %d %d %d\nmap2 %d %d %d\n", time1, score1, coins1, time2, score2, coins2);
+			printf(ICE_BLUE " " RESET);
+			printf("map1 -> time1 : %d, score1 : %d, coins1 : %d\n", time1, score1, coins1);
+			printf(RED " " RESET);
+			printf("map2 -> time2 : %d, score2 : %d, coins2 : %d\n", time2, score2, coins2);
+			printf("\n");
 			found = 1;
 		}
 	}
@@ -3136,5 +3145,3 @@ void read_game_history(const char* username) {
 
 	fclose(file);
 }
-
-#pragma endregion
