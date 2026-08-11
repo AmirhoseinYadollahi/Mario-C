@@ -2965,6 +2965,11 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 
 			// redraw the character at the new position
 			WriteConsoleOutputCharacterW(hConsole, character, 2, coord, &charsWritten);
+
+			// Discard any remaining characters stuck in the input buffer this frame
+			while (_kbhit()) {
+				_getch();
+			}
 		}
 		// Check if the player is in the same spot as a ghost
 		if (map[y - 1][x / 2] == ghost && ghostsAreActive) {
