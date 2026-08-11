@@ -213,6 +213,12 @@ enum types {
 #define WHITE "\033[37m"
 #define BLACK_TEXT RGB_FG(0, 0, 0)
 
+// Extended key codes for Arrow Keys
+#define KEY_UP    72
+#define KEY_LEFT  75
+#define KEY_RIGHT 77
+#define KEY_DOWN  80
+
 #pragma region Mario Background Related Colors
 #define WELCOME_COLOR RGB_FG(0, 168, 0) // The color which the welcome message will print the user's name with
 #define GRASS_SHADE RGB_BG(71,201,66) // The old parts of grass
@@ -2768,6 +2774,10 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 		if (_kbhit()) { // Check if a key is pressed
 			int key = _getch(); // Get the pressed key
 
+			// Arrow keys send a prefix byte (0 or 224) first
+			if (key == 0 || key == 224) {
+				key = _getch(); // Read the secondary code
+			}
 			// Erase the current position by overwriting with spaces
 			WriteConsoleOutputCharacterW(hConsole, L"  ", 2, coord, &charsWritten);
 
@@ -2776,6 +2786,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 			case 'w': // Move up
 			case 'W':
 			case ' ':
+			case KEY_UP:
 				if (y > 2 && !isJumping && !isFalling) {
 					if (map[y - 2][x / 2] != brick && map[y - 2][x / 2] != TPtube && map[y - 2][x / 2] != TPtube2 && map[y - 2][x / 2] != TPtube3 && map[y - 2][x / 2] != shield &&
 						map[y - 2][x / 2] != wood && map[y - 2][x / 2] != coinBlock && map[y - 2][x / 2] != coin && map[y - 2][x / 2] != ice && map[y - 2][x / 2] != sword) {
@@ -2835,6 +2846,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 
 			case 'a': // Move left
 			case 'A':
+			case KEY_LEFT:
 				if (x > 2) {
 					if (map[y - 1][(x / 2) - 1] != brick && map[y - 1][(x / 2) - 1] != 2 && map[y - 1][(x / 2) - 1] != 3 &&
 						map[y - 1][(x / 2) - 1] != coinBlock && map[y - 1][(x / 2) - 1] != coin && map[y - 1][(x / 2) - 1] != ghost &&
@@ -2894,6 +2906,7 @@ void playMario(int map[][72], bool* win_state, maps _map, int* _time, int* _scor
 
 			case 'd':  // Move right
 			case 'D':
+			case KEY_RIGHT:
 				if (x < 140) {
 					if (map[y - 1][x / 2 + 1] != brick && map[y - 1][x / 2 + 1] != TPtube && map[y - 1][x / 2 + 1] != TPtube2 && map[y - 1][x / 2 + 1] != TPtube3 &&
 						map[y - 1][x / 2 + 1] != wood && map[y - 1][x / 2 + 1] != coinBlock && map[y - 1][x / 2 + 1] != coin && map[y - 1][x / 2 + 1] != ghost &&
